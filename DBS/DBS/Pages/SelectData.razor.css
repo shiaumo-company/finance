@@ -1,0 +1,123 @@
+﻿* {
+    /*font-family: "funinn",YouYuan, Monospace;*/
+    font-family: "Microsoft JhengHei";
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+    font-weight: 500;
+}
+
+h3 {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    color: #350E51;
+    font-weight: 700;
+    background-color: rgba(184,193,236,0.8);
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    height: 60px;
+    text-align: center;
+}
+
+    h3:hover {
+        font-size: clamp(1rem, 2.5vw, 2rem);
+        background-color: rgba(171,209,198, 0.8);
+        border-radius: 8px;
+        color: #004643;
+        height: 60px;
+        font-weight: 700;
+        text-align: center;
+        padding: 8px;
+    }
+.table {
+    height: 100%;
+    width: 100%;
+    table-layout: fixed;
+    border-radius: 8px;
+    background-color: #FFFFFE;
+}
+
+table.table tr th {
+    text-align: center; /* 水平居中 */
+    vertical-align: middle; /* 垂直居中 */
+    font-weight: 700;
+    background-color: rgba(184,193,236,0.8); /* 更改活動tab標籤的背景顏色 */
+    color: #350E51; /* 更改活動tab標籤的文字顏色 */
+    font-size: 1.4rem;
+}
+table.table tr td {
+    text-align: center; /* 水平居中 */
+    vertical-align: middle; /* 垂直居中 */
+}
+table.table tbody tr :hover {
+    background-color: rgba(171,209,198, 0.6);
+    color: #004643;
+    text-align: center; /* 水平居中 */
+    vertical-align: middle; /* 垂直居中 */
+    font-weight: 700;
+}
+.first_selected {
+    background-color: rgba(184,193,236,0.8);
+    border: 0px;
+    width: 100px;
+    border-radius: 10px;
+    color: #350E51;
+}
+
+.previous_selected {
+    background-color: rgba(184,193,236,0.8);
+    border: 0px;
+    width: 100px;
+    border-radius: 10px;
+    margin: 10px;
+    color: #350E51;
+}
+
+.selected {
+    background-color: rgba(171,209,198, 0.6);
+    border-radius: 20px;
+    border: 0px;
+    width: 100px;
+    border-color: rgba(171,209,198, 0.6);
+    color: #004643;
+}
+
+.non_selected {
+    width: 100px;
+    background-color: #FFFFFE;
+    border: 0px;
+}
+
+.next_selected {
+    background-color: rgba(184,193,236,0.8);
+    border: 0px;
+    width: 100px;
+    border-radius: 10px;
+    color: #350E51;
+    margin: 10px;
+}
+
+.last_selected {
+    background-color: rgba(184,193,236,0.8);
+    border: 0px;
+    width: 100px;
+    border-radius: 10px;
+    color: #350E51;
+}
+@media only screen and (max-width: 630px) {
+    .table  td {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 1605px) {
+    .table td {
+        width: auto;
+    }
+    .table tr td {
+        width: auto;
+    }
+    table.table tr th {
+        width: auto;
+    }
+}

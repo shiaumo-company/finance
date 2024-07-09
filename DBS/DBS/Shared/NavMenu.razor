@@ -1,0 +1,432 @@
+﻿@inject NavigationManager NavigationManager
+@using System;
+@using System.Data;
+@using System.Data.SqlClient;
+@using DBS.Data
+@using DBS.Pages;
+@using DBS.Services
+@inject IAlertService AlertService
+@inject NavigationManager NavManager
+@inject DataVersionService DataVersionService
+@inject IJSRuntime JSRuntime
+@inherits LayoutComponentBase
+<head>
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="bootstrap-5.1.1/site/content/docs/5.1/examples/dashboard/dashboard.css">
+    <!--fontawsome-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" integrity="sha512-XNkCjx/a0lED2ktq3KaBz1v62cxVvLU9y+gZLnhyl4+btRhe+uxLw6J/9M+k2JvZFsX5v9FxVjH4D2u5JUdw==">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+</head>
+<div class="top-row pl-4 navbar navbar-dark" style="background-color: rgba(184,193,236, 0.5); " @onclick=DrawerToggle>
+    <a class="navbar-brand" href="Hi" style="font-family: 'Papyrus', 'Microsoft JhengHei';"  @bind="_drawerOpen" >Hello財務平台</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu"><i class="fas fa-bars"></i>
+    </button>
+</div>
+
+
+<AuthorizeView>
+    <Authorized>
+        <div class="@NavMenuCssClass"  @onclick="ToggleNavMenu" >
+            <ul class="nav flex-column">
+
+                <li class="nav-item px-2">
+                    @if (!showclick)
+                    {
+                    <NavLink class="nav-link" href="Hi" @onclick=Toggletoggle><!-- SelectData2.razor -->  
+                        <span class="oi oi-list-select" aria-hidden="true"></span> 
+                        @(isToggle ? new MarkupString("<i class='fa fa-minus'></i>") : new MarkupString("<i class='fa fa-plus'></i>"))
+                        &nbsp; &nbsp;<!-- 插入一個空格 -->新增、查詢資料  
+                          </NavLink>
+
+                        }
+                    else
+                    {
+                         <NavLink class="nav-link" href="Hi" ><!-- SelectData2.razor -->  
+                            <span class="oi oi-list-select" aria-hidden="true"></span> 
+                            @(isToggle ? new MarkupString("<i class='fa fa-minus'></i>") : new MarkupString("<i class='fa fa-plus'></i>"))
+                            &nbsp; &nbsp;<!-- 插入一個空格 -->新增、查詢資料  
+                            </NavLink>   
+                    }
+                    @if (isToggle)
+                    { 
+                        
+
+                        @if (!showclick)
+                        {
+                                <div style="padding-left: 10px;"> 
+                                    <li class="nav-item px-3 " > 
+                                        <NavLink class="nav-link" href="SelectData" @onclick=ToggleSelect> 
+                                            <span class="oi oi-list-select" aria-hidden="true"></span>              
+                                        @(isSelect2 ? new MarkupString("<i class='fa fa-minus'></i>") : new MarkupString("<i class='fa fa-plus'></i>"))
+                                                &nbsp; &nbsp;<!-- 插入一個空格 --> 查詢資料 
+                                        </NavLink>
+                                    </li>
+                                </div>
+                        }
+                        else
+                        {
+                                <div style="padding-left: 10px;"> 
+                                    <li class="nav-item px-3 " > > 
+                                        <NavLink class="nav-link" href="SelectData"  >
+                                            <span class="oi oi-list-select" aria-hidden="true"></span>   
+                                        @(isSelect2 ? new MarkupString("<i class='fa fa-minus'></i>") : new MarkupString("<i class='fa fa-plus'></i>"))    
+                                             &nbsp; &nbsp;<!-- 插入一個空格 --> 查詢資料 
+                                        </NavLink>
+                                    </li>
+                                 </div>
+                        }
+                        @if (isSelect)
+                        {
+                                <div style="padding-left: 5px;">
+                                    <ul class="nav navmenu-container  ">
+                                    @if (DataVersionService.DataVersion != 1)//如果有變更則要重新去資料庫抓資料，即時更新
+                                    {
+                                        AccountRepair[] updatedData = UpdateAccountRepairALL();
+                                        @foreach (var banks2 in BankData.GetBankList())
+                                        {
+                                            var distinctRepairs = updatedData.Where(repairs => repairs.baccountBankNo == banks2.BankCode.ToString().Substring(0, 3))
+                                           .GroupBy(item => item.baccountNo)
+                                           .Select(group => group.First()).ToArray();
+                                            if (distinctRepairs.Any())//篩選過後如果有資料
+                                            {
+                                                                    <li class="nav-item px-4">
+                                                                        <NavLink class="nav-link" @onclick="() => NavigateToSubBank(banks2.BankCode)">
+                                                                            <i class="fas fa-university"></i>&nbsp; &nbsp;
+                                                        @banks2.BankName.Substring(3)
+                                                                        </NavLink>
+                                                                    </li>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @foreach (var banks in BankData.GetBankList())//去跑有帳戶的銀行
+                                        {
+                                            var distinctRepairs = ServerData.m_AccountRepairS.Where(repairs => repairs.baccountBankNo == banks.BankCode.ToString().Substring(0, 3))
+                                            .GroupBy(item => item.baccountNo)
+                                            .Select(group => group.First()).ToArray();
+                                            if (distinctRepairs.Any())//篩選過後如果有資料
+                                            {
+                                                                <li class="nav-item px-4">
+                                                                    <NavLink class="nav-link" @onclick="() => NavigateToSubBank(banks.BankCode)">
+                                                                          <i class="fas fa-university"></i>&nbsp; &nbsp;
+                                                        @banks.BankName.Substring(3)
+                                                                    </NavLink>
+                                                                 </li>
+                                            }
+                                        }
+                                    }
+                                  </ul>
+                               </div>
+                        }
+                    }
+             </li>
+                @if (showclick)
+                {
+                    <div style="padding-left: 10px;">
+                        <li class="nav-item px-1 ">
+                                <NavLink class="nav-link" @onclick="() => NavigateToSubBank(selectedBankCode)">
+                                @selectedBankCode.ToString().Substring(3) <br />(上一頁)
+                            </NavLink>
+                        </li>
+                    </div>
+                    <div style="padding-left: 10px;">
+                        <ul class="nav navmenu-container">
+                            @if (DataVersionService.DataVersion != 1)//如果有變更則要重新去資料庫抓資料，即時更新
+                            {
+                                AccountRepair[] updatedData = UpdateAccountRepairALL();
+                                var distinctRepairs = updatedData.Where(repairs => repairs.baccountBankNo == selectedBankCode.ToString().Substring(0, 3))
+                           .GroupBy(item => item.baccountNo)
+                           .Select(group => group.First()).ToArray();
+                                kkk += "hello";
+                                @foreach (var account2 in distinctRepairs.ToArray())
+                                {
+                                            <li class="nav-item px-3">
+                                                <NavLink class="nav-link" @onclick="() => NavigateToSubAccount(account2.baccountBank,account2.baccountBankNo,account2.baccountNo)">
+                                                     <i class="fas fa-piggy-bank"></i>&nbsp; &nbsp;  @account2.baccountNo
+                                                </NavLink>
+                                           </li>
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var account in ServerData.m_AccountRepairS.Where(repairs => repairs.baccountBankNo == selectedBankCode.ToString().Substring(0, 3))
+                                          .GroupBy(item => item.baccountNo)
+                                          .Select(group => group.First())
+                                          .ToArray())
+                                {
+                                             <li class="nav-item px-3">
+                                                <NavLink class="nav-link" @onclick="() => NavigateToSubAccount(account.baccountBank,account.baccountBankNo,account.baccountNo)">
+                                                    <i class="fas fa-piggy-bank"></i>&nbsp; &nbsp; @account.baccountNo
+                                                </NavLink>
+                                             </li>
+                                }
+                            }
+                  </ul>
+                  </div>
+                }
+
+              <li class="nav-item px-2">
+                    <NavLink class="nav-link" href="Hi"  @onclick=Togglerepair> <!-- AccountRepairData.razor -->  
+                        <span class="oi oi-list-select" aria-hidden="true"></span>                       
+                        @(isToggleRepair ? new MarkupString("<i class='fa fa-minus'></i>") : new MarkupString("<i class='fa fa-plus'></i>"))
+                        &nbsp; &nbsp;<!-- 插入一個空格 -->  帳戶維護 
+                    </NavLink>
+                    @if (isToggleRepair)
+                    {
+                        <div  style="padding-left: 10px;"> 
+                            <li class="nav-item px-3  li_insert" >
+                                <NavLink class="nav-link" href="InsertAccount"  >
+                                    <i class="fas fa-user-plus"></i> &nbsp; &nbsp;新增帳戶
+                                </NavLink>
+                            </li> 
+                            <li class="nav-item px-3 " > 
+                                <NavLink class="nav-link li_select" href="SelectAccount"  >
+                                    <i class="fas fa-location-arrow"></i> &nbsp; &nbsp;查詢帳戶
+                                 </NavLink>
+                             </li> 
+                       </div>   
+                    }
+                </li>
+           </ul>
+
+           <ul class="nav flex-column isbottom">
+               <li class="nav-item px-3">
+                   <NavLink class="nav-link" @onclick="LogOut" href="/logoutModel?returnUrl=/">
+                       <i class="fas fa-arrow-left"></i>  &nbsp; &nbsp;登出
+                   </NavLink>
+               </li>
+           </ul>
+     </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <ul class="nav flex-column">
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="#">
+                          <i class="fas fa-arrow-right"></i>&nbsp; &nbsp;登入
+                    </NavLink>
+                    <NavLink class="nav-link" href="Signin">
+                         <i class=" fas fa-id-card"></i>&nbsp; &nbsp; 註冊
+                    </NavLink>
+
+                </li>
+            </ul>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+                <!--                
+                    <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="fetchdata">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> 歷史交易
+                    </NavLink>
+                </li>
+                -->
+                               <!--
+
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="repairdata">
+                        <span class="oi oi-action-undo" aria-hidden="true"></span> 補資料
+                    </NavLink>
+                </li>-->
+
+@code {
+    bool _drawerOpen = true;
+    public void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    string kkk = "";
+
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private bool isSubMenuOpen = false;
+
+    private void ToggleSubMenu()
+    {
+        isSubMenuOpen = !isSubMenuOpen;
+    }
+
+    private bool isToggleRepair = false;
+    private void Togglerepair()
+    {
+        isToggleRepair = !isToggleRepair;
+    }
+
+    private bool isToggle = false;
+    private bool isInsert = false;
+    private bool isSelect = false;
+    private void Toggletoggle()
+    {
+        isToggle = !isToggle;
+        isInsert = false;
+        isSelect = false;
+        if (!isToggle)
+        {
+            showclick = false; // 收起新增、查詢資料時同時收起查詢資料
+            isSelect2 = false; // 收起新增、查詢資料時同時收起查詢資料
+        }
+
+    }
+    private void ToggleInsert()
+    {
+        isToggle = true;
+        isInsert = !isInsert;
+        isSelect = false;
+
+    }
+    private bool isSelect2 = false;
+    private void ToggleSelect()
+    {
+        isToggle = true;
+        isInsert = false;
+        isSelect = !isSelect;
+        isSelect2 = !isSelect2;
+
+    }
+
+    private bool showSummaryBank_Daily = false;
+    private void ToggleSummaryBank()
+    {
+        // 切換 bank 的點選狀態
+        showSummaryBank_Daily = !showSummaryBank_Daily;//true->跳出銀行
+        showSummaryBank = !showSummaryBank;
+        if (showclick)
+        {
+            showclick = !showclick;
+        }
+
+
+        kkk += $"showsummarybank_Daily{showSummaryBank_Daily}showclick{showclick}";
+
+    }
+    private bool showSummaryBank = true;
+    private bool showSummaryBank_Month = false;
+
+    string yyy = "";
+    private bool showclick = false;
+    string selectedBankCode = "";
+    private bool showSummaryAccount = false;
+    private string subBank = "";
+    private bool showunique = false;
+    private void NavigateToSubBank(string bankCode)
+    {
+        showSummaryAccount = !showSummaryAccount;
+        showunique = !showunique;
+        showunique2 = !showunique2;
+        isSelect = !isSelect;
+
+        // 使用 Blazor 導航服務導航到指定 URL
+        NavigationManager.NavigateTo($"/dailybankselect/{bankCode}");
+        selectedBankCode = bankCode;
+        kkk += ($"導航到 /dailybanksummary/{bankCode.Substring(0, 3)}");
+        kkk += bankCode;
+
+        kkk += "hello";
+        showSummaryBank_Daily = !showSummaryBank_Daily;
+        showclick = !showclick;
+    }
+
+    private string subAccount = "";
+    string selectedAccountCode = "";
+    private string subBank2 = "";
+    private bool showunique2 = false;
+    private bool showunique2_month = false;
+    private void NavigateToSubAccount(string bankName, string bankCode, string AccountCode)
+    {
+        // 重置页面状态
+        subBank2 = bankName + bankCode;
+        showSummaryAccount = !showSummaryAccount;//true->帳戶跑出來
+                                                 // 使用 Blazor 導航服務導航到指定 URL
+        NavigationManager.NavigateTo($"/dailyaccountselect/{subBank2}/{AccountCode}");
+        selectedAccountCode = AccountCode;
+        kkk += ($"導航到 /dailyaccountselect/{AccountCode}");
+    }
+
+
+
+    public DataSet dataset = new DataSet();
+    public NewAccount[] m_NewAccountS;//帳戶維護的列表
+    public AccountRepair[] m_AccountRepairS;//帳戶維護的列表
+    public AccountRepair[] UpdateAccountRepairALL()
+    //專門給選擇銀行後跳出對應帳戶用的更新資料(有時候可能會先使用銀行維護去新增資料，這時候就要用他嚕)
+    {
+        // 將 NewAccount[] 陣列轉換為 List<NewAccount>
+        List<AccountRepair> newList = ServerData.m_AccountRepairS.ToList();
+        // 新資料列表
+        List<AccountRepair> newDataList = GetAccountRepair();
+        // 使用 LINQ 的 Except 方法排除已經存在的資料
+        newDataList = newDataList.Except(newList).ToList();
+        // 使用 AddRange 將新資料列表添加到現有的列表中
+        newList.AddRange(newDataList);
+        // 將結果轉換回陣列
+        // 將新資料列表添加到現有的 m_NewAccountS 中
+        m_AccountRepairS = newList.ToArray();
+        return m_AccountRepairS;
+    }
+    public List<AccountRepair> GetAccountRepair()//再次抓取資料
+    {
+        List<AccountRepair> newDataList = new List<AccountRepair>();
+        //SqlConnection sqlconnection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+        string connectionString = "Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022";
+        string SQLString = "SELECT * FROM NewAccountRepair ";
+        dataset = new DataSet();
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            using (SqlCommand command = new SqlCommand(SQLString, connection))
+            {
+                try
+                {
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            AccountRepair newData = new AccountRepair
+                                {
+                                    // 這裡的屬性賦值根據您的資料表結構進行調整
+                                    baccountBank = reader.GetString(reader.GetOrdinal("accountBank")),
+                                    baccountBankNo = reader.GetString(reader.GetOrdinal("accountBankNo")),
+                                    baccountBranch = reader.GetString(reader.GetOrdinal("accountBranch")),
+                                    baccountBranchNo = reader.GetString(reader.GetOrdinal("accountBranchNo")),
+                                    baccountNo = reader.GetString(reader.GetOrdinal("accountNo")),
+                                    baccountAddress = reader.GetString(reader.GetOrdinal("accountAddress")),
+                                    baccountInitialMoney = reader.IsDBNull(reader.GetOrdinal("accountInitialMoney")) ? 0 : reader.GetDecimal(reader.GetOrdinal("accountInitialMoney")),
+                                    bremark = reader.IsDBNull(reader.GetOrdinal("remark")) ? "" : reader.GetString(reader.GetOrdinal("remark")),
+                                    baccountInsert = reader.IsDBNull(reader.GetOrdinal("accountInsert")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("accountInsert")),
+                                    baccountUpdate = reader.IsDBNull(reader.GetOrdinal("accountUpdate")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("accountUpdate")),
+
+                                    // 其他屬性...
+                                };
+                            newDataList.Add(newData);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    kkk += ex.Message;
+                }
+            }
+        }
+        return newDataList;
+    }
+    public async void Update() => await InvokeAsync(() => { StateHasChanged(); });
+    public void LogOut(MouseEventArgs e)
+    {
+        Update();
+    }
+
+
+
+}

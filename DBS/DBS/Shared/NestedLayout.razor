@@ -1,0 +1,15 @@
+﻿@layout MainLayout
+@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+
+<div class="page">
+
+
+    
+        <div style="position: fixed; z-index: 999; right: 0;bottom: 0;">
+            <Alert />
+        </div>
+        <div class="content ">
+            @Body
+        </div>
+ </div>

@@ -1,0 +1,249 @@
+﻿<h3> 查詢資料  &nbsp; &nbsp;SelectData</h3>
+@page "/SelectData"
+@using System;
+@using System.Data;
+@using System.Data.SqlClient;
+@using DBS.Data
+@using DBS.Pages;
+@using DBS.Services
+@using X.PagedList
+@using Microsoft.AspNetCore.Components.Web;
+@inject IAlertService AlertService
+@inject NavigationManager NavManager
+@inject DataVersionService DataVersionService
+
+<head>
+	<link href="styles/site.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" integrity="sha512-XNkCjx/a0lED2ktq3KaBz1v62cxVvLU9y+gZLnhyl4+btRhe+uxLw6J/9M+k2JvZFsX5v9FxVjH4D2u5JUdw==">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+</head>
+
+<AuthorizeView>
+	<Authorized>
+		 <table class="table" style="text-align:right; margin-top:20px;" >
+			<thead>
+				<tr>
+					<th style="text-align:center">交易日期</th>
+					<th style="width:400px;text-align:left" >銀行代碼</th>
+					<th>銀行帳號</th>
+					<th>方式</th>
+					<th style="text-align:right;" >收入</th>
+					<th style="text-align:right;">支出</th>
+					<th>結存餘額</th>
+					<th>對方帳號</th>
+					<th>備註</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (m_NewAccountS != null)
+				{
+					@foreach (var account in PagedList)
+					{
+					<tr  onmouseover="this.style.backgroundColor='rgba(184,193,236,0.6)';this.style.color='#350E51';" onmouseout="this.style.backgroundColor='#FFFFFE';">
+						<td style="text-align:center">@account.baccountDate.ToShortDateString()</td>
+						<td style="text-align:left" >@account.baccountBankNo @account.baccountBank<br />
+						@foreach (var repair in ServerData.m_AccountRepairS.Where(r => r.baccountNo == account.baccountNo))
+						{
+							<span>@repair.baccountBranchNo @repair.baccountBranch</span>
+							<br />
+						}
+						</td>
+						<td style="width:400px">@account.baccountNo</td>
+						<td>@account.baccountType</td>
+						<td style="text-align:right;">@account.baccountIn</td>
+						<td  style="text-align:right;">@account.baccountOut</td>
+						<td>@account.baccountTotal</td>
+						<td>@account.baccountOtherNo</td>
+						<td>@account.bremark</td>
+					</tr>
+					}
+				}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan=9>
+						<div class="pager">
+							@if (PagedList.PageCount > 1)
+							{
+								<button @onclick="(() => LoadPage(1))" class="first_selected"><i class="fas fa-angle-double-left"></i>&nbsp第一頁</button>
+								@if (PagedList.PageNumber == 1)
+								{	
+									<button @onclick="(() => LoadPage(1))" class="previous_selected"><i class="fas fa-angle-left"></i>&nbsp上一頁</button>
+								}
+								else
+								{
+									<button @onclick="(() => LoadPage(PagedList.PageNumber - 1))" class="previous_selected"><i class="fas fa-angle-left"></i>&nbsp上一頁</button>
+								}
+							}
+							@if(PagedList.PageCount<=9)
+							{
+								@foreach (var pageNumber in Enumerable.Range(1, PagedList.PageCount))
+								{
+										<button @onclick="(() => LoadPage(pageNumber))" class="@(pageNumber == PagedList.PageNumber ? "selected" : "non_selected")">@pageNumber</button>
+								}
+							}
+							else
+							{
+								var startPage = Math.Max(1, PagedList.PageNumber -4);
+								var endPage = Math.Min( PagedList.PageNumber +4, PagedList.PageCount);
+
+								@foreach (var pageNumber in Enumerable.Range(startPage, endPage - startPage + 1))
+								{
+									<button @onclick="(() => LoadPage(pageNumber))" class="@(pageNumber == PagedList.PageNumber ? "selected" : "non_selected")">@pageNumber</button>
+								}
+							}
+							@if (PagedList.PageCount > 1)
+							{
+								@if (PagedList.PageNumber == PagedList.PageCount)
+								{
+										<button  @onclick="(() => LoadPage(PagedList.PageCount))" class="next_selected">下一頁&nbsp<i class="fas fa-angle-double-right"></i></button>
+								}
+								else
+								{
+									<button  @onclick="(() => LoadPage(PagedList.PageNumber +1))" class="next_selected">下一頁&nbsp<i class="fas fa-angle-double-right"></i></button>
+								}
+								<button  @onclick="(() => LoadPage(PagedList.PageCount))" class="last_selected">最末頁&nbsp<i class="fas fa-angle-double-right"></i></button>
+							}
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	private NewAccount[] m_NewAccountS { get; set; }
+	private AccountRepair[] m_AccountRepairS { get; set; }
+	private IPagedList<NewAccount> PagedList { get; set; }
+	private const int PageSize = 9;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		OnClickSelect_All(); // 在頁面初始化時自動調用 onclickselect_all 方法
+		LoadPage(1);
+	}
+	private void LoadPage(int pageNumber)
+	{
+		PagedList = m_NewAccountS.ToPagedList(pageNumber, PageSize);
+	}
+
+	private void HandlePageChange(int newPageNumber)
+	{
+		LoadPage(newPageNumber);
+	}
+
+	string kkk = "";
+	public void OnClickSelect_All()
+	{
+		try
+		{
+			// 判斷資料庫是否有變動
+			if (DataVersionService.DataVersion != 1)
+			{
+				m_NewAccountS = Array.Empty<NewAccount>();
+				NewAccount[] updatedData = UpdateNewDataALL2();
+				m_NewAccountS = updatedData.GroupBy(item => item.baccountNo) // 按帳號分組
+				.Select(group => group.OrderBy(item => item.baccountBank)
+							.ThenBy(item => item.baccountNo)
+							.ThenBy(item => item.baccountDate)
+							.ThenBy(item => item.baccountInsert))
+				.SelectMany(sortedGroup => sortedGroup).ToArray();
+				LoadPage(1);
+
+			}
+			else
+			{
+				if (m_NewAccountS == null)
+				{
+					m_NewAccountS = ServerData.m_NewAccountS.GroupBy(item => item.baccountNo) // 按帳號分組
+					.Select(group => group.OrderBy(item => item.baccountBank)
+											.ThenBy(item => item.baccountNo)
+											.ThenBy(item => item.baccountDate)
+											.ThenBy(item => item.baccountInsert))
+					.SelectMany(sortedGroup => sortedGroup).ToArray();
+					LoadPage(1);
+
+				}
+				else
+				{
+					m_NewAccountS = Array.Empty<NewAccount>();
+					m_NewAccountS = ServerData.m_NewAccountS.GroupBy(item => item.baccountNo) // 按帳號分組
+					.Select(group => group.OrderBy(item => item.baccountBank)
+											.ThenBy(item => item.baccountNo)
+											.ThenBy(item => item.baccountDate)
+											.ThenBy(item => item.baccountInsert))
+					.SelectMany(sortedGroup => sortedGroup).ToArray();
+					LoadPage(1);
+
+				}
+			}
+		}
+		catch (Exception msg)
+		{
+			kkk = msg.Message;
+		}
+		AlertService.Success($"總共查詢到{m_NewAccountS.Count()}筆資料");
+		if (m_NewAccountS == null)
+		{
+			AlertService.Warn("尚無資料");
+		}
+	}
+
+	public NewAccount[] UpdateNewDataALL2()
+	{
+		// 新資料列表
+		List<NewAccount> newDataList = GetNewData();
+		// 將新資料列表添加到現有的 m_NewAccountS 中
+		m_NewAccountS = newDataList.ToArray();
+		return m_NewAccountS;
+	}
+
+	public DataSet dataset = new DataSet();
+	public List<NewAccount> GetNewData()//再次抓取資料
+	{
+		List<NewAccount> newDataList = new List<NewAccount>();
+		//SqlConnection sqlconnection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+		string connectionString = "Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022";
+		string SQLString = "SELECT ROW_NUMBER() OVER (PARTITION　BY accountBank, accountNo ORDER BY  accountDate ASC )  , * FROM NewAccountInfo; ";
+		dataset = new DataSet();
+		using (SqlConnection connection = new SqlConnection(connectionString))
+		{
+			using (SqlCommand command = new SqlCommand(SQLString, connection))
+			{
+				connection.Open();
+				using (SqlDataReader reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						NewAccount newData = new NewAccount
+							{
+								// 這裡的屬性賦值根據您的資料表結構進行調整
+								baccountDate = reader.GetDateTime(reader.GetOrdinal("accountDate")),
+								baccountBank = reader.GetString(reader.GetOrdinal("accountBank")),
+								baccountBankNo = reader.GetString(reader.GetOrdinal("accountBankNo")),
+								baccountBranch = reader.GetString(reader.GetOrdinal("accountBranch")),
+								baccountBranchNo = reader.GetString(reader.GetOrdinal("accountBranchNo")),
+								baccountNo = reader.GetString(reader.GetOrdinal("accountNo")),
+								baccountType = reader.GetString(reader.GetOrdinal("accountType")),
+								baccountIn = reader.IsDBNull(reader.GetOrdinal("accountIn")) ? 0 : reader.GetDecimal(reader.GetOrdinal("accountIn")),
+								baccountOut = reader.IsDBNull(reader.GetOrdinal("accountOut")) ? 0 : reader.GetDecimal(reader.GetOrdinal("accountOut")),
+								baccountTotal = reader.IsDBNull(reader.GetOrdinal("accountTotal")) ? 0 : reader.GetDecimal(reader.GetOrdinal("accountTotal")),
+								baccountOtherNo = reader.GetString(reader.GetOrdinal("accountOtherNo")),
+								baccountAddress = reader.GetString(reader.GetOrdinal("accountAddress")),
+								bremark = reader.IsDBNull(reader.GetOrdinal("remark")) ? "" : reader.GetString(reader.GetOrdinal("remark")),
+								baccountInsert = reader.GetDateTime(reader.GetOrdinal("accountInsert")),
+								baccountUpdate = reader.IsDBNull(reader.GetOrdinal("accountUpdate")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("accountUpdate")),
+								// 其他屬性...
+							};
+						newDataList.Add(newData);
+					}
+				}
+			}
+			return newDataList;
+		}
+	}
+}

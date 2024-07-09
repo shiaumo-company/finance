@@ -1,0 +1,228 @@
+﻿<h3>importdata</h3>
+@page "/importdata"
+@using System;
+@using System.Data;
+@using System.Data.SqlClient;
+@using DBS.Data
+@using DBS.Services
+@inject IAlertService AlertService
+@inject NavigationManager NavManager
+
+<AuthorizeView>
+		<Authorized>
+		 <h2 style="margin-bottom:15px">新增收入.支出</h2>
+		 <tr>
+			 <td>ID</td>
+			 <td>
+				 <input id="userid" type="text" asp-for="userid" />
+			 </td>
+		 </tr>
+		 <tr>
+			 <td></td>
+			 <td>
+
+			 </td>
+		 </tr>		 <tr>
+			 <td></td>
+			 <td>
+
+			 </td>
+		 </tr>
+		 <button  id="Add_btn" @onclick="OnClickAdd">新增</button>
+		 <button id="Del_btn" @onclick="OnClickDel">刪除</button>
+		 <button id="Update_btn" @onclick="OnClickUpdate">修改</button>
+		 <button id="Select_btn" @onclick="OnClickSelect">查詢</button>
+		 <button @onclick="CheckDatabaseConnection">測試連接</button>
+		 <button @onclick="CheckSQLConnection">測試資料表</button>
+		 <p>@resultMessage</p>
+		 <p>@resultuserpassword</p>
+
+		 <select style="height: 30px;" @onchange="BankChange">
+			<option value="" disabled selected>請選擇銀行</option>
+			<option value="bank_001">中央信託</option>
+			<option value="bank_002">農民銀行</option>
+			<option value="DBS">DBS</option>
+		 </select>
+		 <select style="height: 30px"; @onchange="AccountChange">
+			 <option value="" disabled selected>請選擇帳號</option>
+			 @foreach (var user in ServerData.m_AccountRepairS)
+			{
+				<option value=@user.baccountBank>@user.baccountBank</option>
+			}
+		</select>
+		 <table class="table" style="text-align:right">
+			<thead>
+				<tr>
+					<th style="text-align:center">交易日期</th>
+					<th>我的帳號</th>
+					<th>收入</th>
+					<th>支出</th>
+					<th>結存餘額</th>
+					<th>對方行帳號</th>
+					<th>備註</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (dataset != null && dataset.Tables["User_Password"] != null)
+				{
+					@foreach (DataRow row in dataset.Tables["User_Password"].Rows)
+					{
+						<tr>
+							<td>@row["ID"]</td>
+							<td>@row["username"]</td>
+							<td>@row["password"]</td>
+						</tr>
+					}
+				}
+				else
+				{
+					
+				}
+			</tbody>
+		</table>
+
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	public DataSet dataset = new DataSet();
+	string bank;
+	string account;
+	//確保有連接資料庫成功
+	string resultMessage = "No connection attempt made yet.";
+	SqlConnection connection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+	void CheckDatabaseConnection()
+	{
+		if (connection.State == System.Data.ConnectionState.Closed)
+		{
+			connection.Open();
+			resultMessage = "Connected to the database successfully!";
+		}
+		else if (connection.State == System.Data.ConnectionState.Open)
+		{
+			resultMessage = "Connection is already open.";
+		}
+	}
+	string SQLString = "SELECT * FROM Platform..User_Password WHERE 1=1";
+	string resultuserpassword = "no connectin userpassword";
+
+	//確定有連到正確的資料表
+	public void CheckSQLConnection()
+	{
+		string connectionString = "Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022";
+		dataset = new DataSet();
+		using (SqlConnection connection = new SqlConnection(connectionString))
+		{
+			try
+			{
+				// 檢查是否已連接
+				if (connection.State == ConnectionState.Closed)
+				{
+					connection.Open();
+					resultuserpassword = "Connected to userpassword!";
+					// 創建 SqlCommand 對象
+					using (SqlCommand command = new SqlCommand(SQLString, connection))
+					{
+						// 使用 ExecuteReader 执行 SQL 查询
+						using (SqlDataReader reader = command.ExecuteReader())
+						{
+							// 判斷是否有行
+							if (reader.HasRows)
+							{
+								resultuserpassword = " Data found in the User_Password table.";
+							}
+							else
+							{
+								resultuserpassword = " No data found in the User_Password table.";
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				resultuserpassword = ex.Message;
+			}
+		}
+	}
+	public void BankChange(ChangeEventArgs e)
+	{
+		bank = e.Value.ToString();
+	}
+	public void AccountChange(ChangeEventArgs e)
+	{
+		account = e.Value.ToString();
+	}
+	string cc = "";
+	string cc_up = "";
+
+	public void OnClickAdd(MouseEventArgs e)
+	{
+		string SQLString = "INSERT INTO dbo.User_Password ([ID],[username],[password]) VALUES  (  )";
+		SqlConnection sqlconnection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+		DataSet dataSet_up = new DataSet();
+		if (sqlconnection.State == System.Data.ConnectionState.Closed)
+		{
+			sqlconnection.Open();
+			SqlCommand sqlcommand = new SqlCommand(SQLString, sqlconnection);
+			int rowsAffected = sqlcommand.ExecuteNonQuery();
+			if (rowsAffected > 0)
+			{
+				cc_up = $"成功更新{rowsAffected}條";
+
+			}
+			else
+			{
+				cc_up = " 更新失敗";
+			}
+		}
+
+		else
+		{
+			cc = "修改帳號密碼不為空";
+		}
+
+	}
+	public void OnClickDel(MouseEventArgs e)
+	{
+	}
+	public void OnClickUpdate(MouseEventArgs e)
+	{
+	}
+
+	public void OnClickSelect(MouseEventArgs e)
+	{
+		dataset = new DataSet();
+		try
+		{
+			//where 1=1 讓動態構建SQL查詢條件，可保持易讀性，Platform資料庫，User_Passwrod資料表
+			string SQLString = "Select * from Platform..User_Password where 1=1 ";
+			SqlConnection sqlconnection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+			using (SqlDataAdapter adapter = new SqlDataAdapter(SQLString, sqlconnection))
+			{
+				// 清空 DataSet
+				dataset.Clear();
+				//填充DataSet
+				adapter.Fill(dataset, "User_Password");
+			}
+			if (dataset.Tables["User_Password"].Rows.Count > 2)
+			{
+				resultuserpassword = " Data found in the User_Password table.";
+			}
+			else
+			{
+				resultuserpassword = " No data found in the User_Password table.";
+			}
+		}
+		catch (Exception msg)
+		{
+			resultuserpassword = msg.Message;
+		}
+
+	}
+
+}
+
+
+
+

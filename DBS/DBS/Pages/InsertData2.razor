@@ -1,0 +1,154 @@
+﻿<h3>InsertData</h3>
+@page "/Insertdata2"
+@using System;
+@using System.Data;
+@using System.Data.SqlClient;
+@using DBS.Data;
+@using DBS.Pages;
+@using DBS.Services
+@inject IAlertService AlertService
+@inject NavigationManager NavManager
+
+<AuthorizeView>
+	<Authorized>
+		<h2 style="margin-bottom:15px">每日報表</h2>
+		<td>交易日期</td>
+		<td>		
+			<input type="date" value="" @onchange="EditDateChange " >
+		</td>
+			<select style="height: 30px;" @onchange="AccountChange">
+			<option value="" disabled selected>請選擇帳號</option>
+			<!--若有重複，依照accountNo群組後並指選擇第一個-->
+			@foreach (var account2 in ServerData.m_NewAccountS.Where(item => item.baccountDate == editDate)
+																			.GroupBy(item => new { item.baccountNo })
+																			.Select(group => group.First())
+																			.ToArray())
+			{
+				<option >@account2.baccountNo</option>
+			}
+
+
+			</select>
+		<button style="height: 30px;width :100px;"id="SelectTotal_btn" @onclick="OnClickSelectTotal">每日總報表</button>
+		<button style="height: 30px;width :130px;"id="SelectTotal_btn" @onclick="OnClickSelectIndivual">每日各帳戶報表</button>
+		<table class="table" style="text-align:right">
+			<thead >
+				<tr>
+					<th style="text-align:center">交易日期</th>
+					<th>帳號代碼</th>
+					<th>我的帳號</th>
+					<th>付款方式</th>
+					<th>收入</th>
+					<th>支出</th>
+					<th>對方行帳號</th>
+					<th>備註</th>
+				</tr>
+			</thead>
+			<tbody border =3>
+				@if (m_NewAccountS != null)
+				{
+					@foreach (var account in m_NewAccountS)
+					{
+						var index = Array.IndexOf(m_NewAccountS, account);
+						var isEditing = editStates.ContainsKey(index) && editStates[index];
+								<tr>
+									<td style="text-align:center">
+										<button @onclick="() => toggleDetails(index)">
+									@if (editStates.ContainsKey(index) && editStates[index])
+									{
+													<span>▼</span>
+									}
+									else
+									{
+													<span>▶</span>
+									}
+										</button>
+								    @account.baccountDate.ToShortDateString()
+
+									</td>
+									<td>@account.baccountBankNo@account.baccountBank</td>
+									<td>@account.baccountNo</td>
+									<td>@account.baccountType</td>
+									<td>@account.baccountIn</td>
+
+									<td>@account.baccountOut</td>
+									<td>@account.baccountOtherNo</td>
+									<td>@account.bremark</td>
+								</tr>
+								@if (editStates.ContainsKey(index) && editStates[index])
+								{
+								<td>結存餘額：@totalmoney, @account.baccountIn, @account.baccountOut,@account.baccountTotal</td>
+								}
+					}
+				}
+			</tbody>
+		</table>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	private NewAccount[] m_NewAccountS;
+	bool bError = false;
+
+	decimal  totalmoney=0;
+	public void cal()
+	{
+		@foreach (var account in m_NewAccountS)
+		{
+			totalmoney +=  account.baccountIn - account.baccountOut;
+
+		}
+	}
+	DateTime editDate;
+	public void EditDateChange(ChangeEventArgs e)
+	{
+		editDate = Convert.ToDateTime(e.Value);
+	}
+	string account;
+	public void AccountChange(ChangeEventArgs e)
+	{
+		account = e.Value.ToString();
+	}
+	Dictionary<int, bool> editStates = new Dictionary<int, bool>();
+	public void toggleDetails(int index)
+	{
+		if (editStates.ContainsKey(index))
+		{
+			editStates[index] = !editStates[index];
+		}
+		else
+		{
+			editStates.Add(index, true);
+		}
+	}
+	//每日總報表
+	public void OnClickSelectTotal(MouseEventArgs e)
+	{
+		if (editDate.ToString() == "0001/1/1 上午 12:00:00")
+		{
+			bError = true;
+			AlertService.Error("請輸入開始日期");
+		}
+		m_NewAccountS = ServerData.m_NewAccountS.Where(item => item.baccountDate == editDate).ToArray();
+	}
+	//每日各帳戶報表
+	public void OnClickSelectIndivual(MouseEventArgs e)
+	{
+		if (editDate.ToString() == "0001/1/1 上午 12:00:00")
+		{
+			bError = true;
+			AlertService.Error("請輸入開始日期");
+		}
+		if (string.IsNullOrEmpty(account))
+		{
+			AlertService.Error("請選擇帳號");
+			return;
+		}
+		m_NewAccountS = ServerData.m_NewAccountS.Where(item => item.baccountDate == editDate && item.baccountNo == account).ToArray();
+	}
+
+}
+
+
+
+

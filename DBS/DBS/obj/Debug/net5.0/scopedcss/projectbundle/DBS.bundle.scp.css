@@ -1,0 +1,212 @@
+@import '';
+
+/* _content/DBS/Pages/AccountRepairData.razor.rz.scp.css */
+body[b-naojhco0ht]
+{
+    .right-align{
+                    text-align:right;
+                }
+}
+/* _content/DBS/Pages/SelectAccount.razor.rz.scp.css */
+.nav-tabs[b-9c0dvomrrc] {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.nav-item[b-9c0dvomrrc] {
+    flex: 0 0 calc(100% / 9); /* 每行最多顯示九個按鈕 */
+
+}
+.nav-link[b-9c0dvomrrc] {
+    width: 100%; /* 設置按鈕寬度為 100% */
+}
+
+.nav-link.active[b-9c0dvomrrc] {
+        background-color: blue; /* 更改活動tab標籤的背景顏色 */
+        color: white; /* 更改活動tab標籤的文字顏色 */
+}
+/* _content/DBS/Pages/SelectData2.razor.rz.scp.css */
+body[b-e86d5vzpmg] {
+}
+/* _content/DBS/Shared/MainLayout.razor.rz.scp.css */
+.page[b-ygfwpt5i0q] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.main[b-ygfwpt5i0q] {
+    flex: 1;
+}
+
+.sidebar[b-ygfwpt5i0q] {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.top-row[b-ygfwpt5i0q] {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row[b-ygfwpt5i0q]  a, .top-row .btn-link[b-ygfwpt5i0q] {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+    }
+
+    .top-row a:first-child[b-ygfwpt5i0q] {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+@media (max-width: 640.98px) {
+    .top-row:not(.auth)[b-ygfwpt5i0q] {
+        display: none;
+    }
+
+    .top-row.auth[b-ygfwpt5i0q] {
+        justify-content: space-between;
+    }
+
+    .top-row a[b-ygfwpt5i0q], .top-row .btn-link[b-ygfwpt5i0q] {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 641px) {
+    .page[b-ygfwpt5i0q] {
+        flex-direction: row;
+    }
+
+    .sidebar[b-ygfwpt5i0q] {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row[b-ygfwpt5i0q] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .main > div[b-ygfwpt5i0q] {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+/* _content/DBS/Shared/NavMenu.razor.rz.scp.css */
+.navbar-toggler[b-q81ionftx5] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row[b-q81ionftx5] {
+    height: 3.5rem;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.navbar-brand[b-q81ionftx5] {
+    font-size: 1.1rem;
+}
+
+.oi[b-q81ionftx5] {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item[b-q81ionftx5] {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type[b-q81ionftx5] {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type[b-q81ionftx5] {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item[b-q81ionftx5]  a {
+        color: #d7d7d7;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+.navmenu-container[b-q81ionftx5] {
+    height: 350px;
+    width: 100%; /* 使用整個寬度 */
+    flex-direction: row; /* 將主軸方向設置為垂直方向 */
+    overflow-y: auto; /* 啟用垂直滾動 */
+}
+
+
+.nav-item[b-q81ionftx5]  a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.nav-item[b-q81ionftx5]  a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.isbottom[b-q81ionftx5] {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler[b-q81ionftx5] {
+        display: none;
+    }
+
+    .collapse[b-q81ionftx5] {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+
+    li.dropdown-submenu > a[b-q81ionftx5]:after {
+        display: block;
+        content: "+";
+        float: right;
+        font-size: 15px;
+        margin-top: -1px;
+        margin-left: 5px;
+        border: solid 1px #ccc;
+        padding: 0 4px;
+        border-radius: 3px;
+    }
+    li.dropdown-submenu.open > a[b-q81ionftx5]:after {
+        content: "-";
+    }
+
+    li.open ul.dropdown-menu > li.open > ul.dropdown-menu[b-q81ionftx5] {
+        position: relative;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+        li.open ul.dropdown-menu > li.open > ul.dropdown-menu > li[b-q81ionftx5] {
+            padding-left: 20px;
+        }
+ 
+    .dropdown-menu > li > a:focus[b-q81ionftx5],
+    .dropdown-menu > li > a:hover[b-q81ionftx5] {
+        background: rgba(0,0,0,0.1) !important;
+    }
+
+
+
+}

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>54b56400-2d58-4174-93f8-07fadac52407</UserSecretsId>
+	<UseRazorSourceGenerator>false</UseRazorSourceGenerator>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\SelectData.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\LogWind.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AntDesign" Version="0.18.0" />
+    <PackageReference Include="Blazored.Typeahead" Version="4.7.0" />
+    <PackageReference Include="Blazorise.Components" Version="1.4.3" />
+    <PackageReference Include="BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="BuildWebCompiler" Version="1.12.405" />
+    <PackageReference Include="ColorPickerU8" Version="2.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.57" />
+    <PackageReference Include="jQuery" Version="3.7.1" />
+    <PackageReference Include="MatBlazor" Version="2.10.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="PSC.Blazor.Components.AutoComplete" Version="6.0.28" />
+    <PackageReference Include="Syncfusion.Blazor" Version="24.2.9" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="%40sec\" />
+  </ItemGroup>
+
+</Project>

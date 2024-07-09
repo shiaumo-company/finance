@@ -1,0 +1,153 @@
+@font-face {
+    font-family: 'cwTeXKai';
+    font-style: normal;
+    font-weight: 500;
+    src: url(//fonts.gstatic.com/ea/cwtexkai/v3/cwTeXKai-zhonly.eot);
+    src: url(//fonts.gstatic.com/ea/cwtexkai/v3/cwTeXKai-zhonly.eot?#iefix) format('embedded-opentype'), url(//fonts.gstatic.com/ea/cwtexkai/v3/cwTeXKai-zhonly.woff2) format('woff2'), url(//fonts.gstatic.com/ea/cwtexkai/v3/cwTeXKai-zhonly.woff) format('woff'), url(//fonts.gstatic.com/ea/cwtexkai/v3/cwTeXKai-zhonly.ttf) format('truetype');
+    unicode-range: U+4E00-9FFF; /* 中文字符范围 */
+}
+
+@font-face {
+    font-family: 'english';
+    src: local("Papyrus");
+    unicode-range: U+0000-00FF; /* 英文字符范围 */
+}
+
+* {
+    /*font-family: "funinn",YouYuan, Monospace;*/
+    font-family: 'Microsoft JhengHei';
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+}
+
+.top-row {
+    height: 3.5rem;
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+.fa {
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item {
+    padding-bottom: 0.5rem;
+}
+    .nav-item.px-1{
+        font-size:1.05rem;
+    }
+    .nav-item.px-2 {
+        font-size: 1.05rem;
+    }
+
+    .nav-item.px-3 {
+        font-size: 1rem;
+    }
+    .nav-item.px-4 {
+        font-size: 1rem;
+        display: inline-block;
+        max-width: 100%; /* 宽度限制 */
+        word-wrap: break-word; /* 换行 */
+        white-space: normal; /* 允许换行 */
+        padding:5px;
+    }
+
+    .nav-item:first-of-type {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item ::deep a {
+        color: #d7d7d7;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+        .nav-item ::deep a.active {
+            background-color: rgba(255,255,255,0.25);
+            color: white;
+        }
+    .nav-item.px-1 ::deep a:hover {
+        background-color: #ddbbdd96;
+        padding-top: 40px; /* 增加顶部内边距 */
+        padding-bottom: 40px; /* 增加底部内边距 */
+        color: white;
+    }
+        .nav-item.px-2 ::deep a:hover {
+            background-color: rgba(184,193,236, 0.4);
+            color: white;
+        }
+        .nav-item.px-3 ::deep a:hover {
+        background-color: rgba(171,209,198, 0.4);
+        color: white;
+        }
+
+.isbottom {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+.navmenu-container {
+    height: 350px;
+    width: 100%; /* 使用整個寬度 */
+    flex-direction: row; /* 將主軸方向設置為垂直方向 */
+    overflow-y: auto; /* 啟用垂直滾動 */
+    display: flex;
+}
+
+
+@media (min-width: 641px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+
+    li.dropdown-submenu > a:after {
+        display: block;
+        content: "+";
+        float: right;
+        font-size: 15px;
+        margin-top: -1px;
+        margin-left: 5px;
+        border: solid 1px #ccc;
+        padding: 0 4px;
+        border-radius: 3px;
+    }
+
+    li.dropdown-submenu.open > a:after {
+        content: "-";
+    }
+
+    li.open ul.dropdown-menu > li.open > ul.dropdown-menu {
+        position: relative;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+        li.open ul.dropdown-menu > li.open > ul.dropdown-menu > li {
+            padding-left: 20px;
+        }
+
+    .dropdown-menu > li > a:focus,
+    .dropdown-menu > li > a:hover {
+        background: rgba(0,0,0,0.1) !important;
+    }
+}

@@ -1,0 +1,17 @@
+.nav-tabs[b-9c0dvomrrc] {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.nav-item[b-9c0dvomrrc] {
+    flex: 0 0 calc(100% / 9); /* 每行最多顯示九個按鈕 */
+
+}
+.nav-link[b-9c0dvomrrc] {
+    width: 100%; /* 設置按鈕寬度為 100% */
+}
+
+.nav-link.active[b-9c0dvomrrc] {
+        background-color: blue; /* 更改活動tab標籤的背景顏色 */
+        color: white; /* 更改活動tab標籤的文字顏色 */
+}

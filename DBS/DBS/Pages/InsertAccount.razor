@@ -1,0 +1,455 @@
+﻿<h3>新增帳戶  &nbsp; &nbsp;InsertAccount</h3>
+@page "/InsertAccount"
+@using System;
+@using System.Data;
+@using System.Data.SqlClient;
+@using DBS.Data;
+@using DBS.Pages;
+@using DBS.Services
+@inject IAlertService AlertService
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+@inject DataVersionService DataVersionService
+
+<head>
+	<link href="styles/site.css" rel="stylesheet" />
+	<link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" integrity="sha512-XNkCjx/a0lED2ktq3KaBz1v62cxVvLU9y+gZLnhyl4+btRhe+uxLw6J/9M+k2JvZFsX5v9FxVjH4D2u5JUdw==">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+</head>
+<AuthorizeView>
+	<Authorized>
+		<table class="table" style="text-align:right">
+			<tbody>
+				<tr onmouseover="this.style.backgroundColor='rgba(184,193,236,0.6)';this.style.color='#350E51';" onmouseout="this.style.backgroundColor='#FFFFFE';">
+					<td class="form-field" style="height:100px; ">銀行<br />bank</td>
+					<td class="form-right">
+						<select style="height: 50px;width :255px;" @onchange="BankChange">
+						<option value="" disabled selected>請選擇銀行</option>
+						@foreach (var banks in BankData.GetBankList())
+						{
+							string methodName = $"GetBranchList_{banks.BankCode.ToString().Substring(0, 3)}";
+							var methodInfo = typeof(BankData).GetMethod(methodName);
+							if (methodInfo != null && methodInfo.IsStatic)
+							{
+								var bankList = (List<BranchInfo>)methodInfo.Invoke(null, null);
+								int bankCount = bankList.Count; // 直接使用获取的分行列表的 Count 属性
+								<option value=@banks.BankCode >@banks.BankName (@bankCount)</option>
+							}
+						}
+						</select>
+						<!--區域-->
+												<br/><br/>
+						<select style="height: 50px;width :175px;" @onchange="CityChange">
+						<option value="" disabled selected>請選擇地區</option>
+						@foreach (var citys in BankData.GetCityList())
+						{
+							string methodName = $"GetBranchList_{bankCode}";
+							var methodInfo = typeof(BankData).GetMethod(methodName);
+							if (methodInfo != null && methodInfo.IsStatic)
+							{
+								var bankList = (List<BranchInfo>)methodInfo.Invoke(null, null);
+								var filterbanklist = bankList.Where(item => item.BranchCity == citys.CityCode);
+								int bankCount = filterbanklist.Count();
+								<option value=@citys.CityCode style="@GetItemStyle(citys)">@citys.CityName (@bankCount)</option>
+							}
+						}
+						</select>
+												<br/><br/>
+						<!--分行代碼-->
+						<select style="height: 50px;width :300px;" @onchange="BranchChange">
+						<option value=""  disabled selected>請選擇分行</option>
+						@if (selectedBranchList != null)
+						{
+							@foreach (var banks in selectedBranchList.Where(item => item.BranchCity == @city))
+							{
+								<option value=@banks.BranchCode >@banks.BranchName</option>
+							}
+						}
+						<option value="additionalValue">請選擇分行</option>
+						</select>
+						<!--預設是"請選擇分行-->
+						<script>
+						function resetBranchDropdown() 
+						{
+							var branchDropdown = document.getElementById('branchDropdown');
+							branchDropdown.selectedIndex = 0; // 設置為第一個選項，即"請選擇分行"
+						}
+						</script>
+					</td>
+				</tr>
+				<tr onmouseover="this.style.backgroundColor='rgba(184,193,236,0.6)';this.style.color='#350E51';" onmouseout="this.style.backgroundColor='#FFFFFE';">
+					<td class="form-field" style="height:50px;">開戶帳號<br />account</td>
+					<td class="form-right">
+						<input class="form-account" style="height:50px; width:150px;" readonly value="@bankCode @branchCode" id="InitialCode" asp-for="InitialCode"   />
+						<br/><br/>
+						<input  class="form-account" style="height:50px; width:500px;" id="InitialAccount" type="number" asp-for="InitialAccount" @bind="InitialAccount" placeholder="開戶帳號"/>
+					</td>
+				</tr>
+				<tr onmouseover="this.style.backgroundColor='rgba(184,193,236,0.6)';this.style.color='#350E51';" onmouseout="this.style.backgroundColor='#FFFFFE';">
+					<td class="form-field" style="height:50px; ">銀行地址<br />address</td>
+					<td class="form-right">
+						<input class="form-address" style="height:50px; width:500px;" id="BankAddress" type="text" asp-for="BankAddress" @bind="BankAddress" placeholder="銀行地址" readonly/>
+					</td>
+				</tr>
+				<tr onmouseover="this.style.backgroundColor='rgba(184,193,236,0.6)';this.style.color='#350E51';" onmouseout="this.style.backgroundColor='#FFFFFE';">
+					<td class="form-field"style="height:50px;">銀行網頁<br />web</td>
+					<td class="form-right" style="height:50px; width:175px;">
+						<a href="@selectedBankWeb" target="_blank">@bank</a>
+					</td>
+				</tr>
+				<tr onmouseover="this.style.backgroundColor='rgba(184,193,236,0.6)';this.style.color='#350E51';" onmouseout="this.style.backgroundColor='#FFFFFE';">
+					<td class="form-field" style="height:50px; ">備註<br />remark</td>
+					<td class="form-right">
+						<input style="height:50px; width:500px;" id="remark" type="text" asp-for="remark" @bind="remark" placeholder="備註"/>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>		
+				<td></td>
+				<td class="form-save"><button @onclick="OnClickSave" class="btn_save"><i class="fas fa-download"></i> &nbsp; &nbsp;儲存</button></td>
+			</tfoot>
+		</table>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	string kkkk = "";
+	bool isEdit = false;
+	// 在City2Change事件處理程序中調用JavaScript函數
+	private async Task City2Change(ChangeEventArgs e)
+	{
+		// 调用 JavaScript 函数重置分行下拉列表
+		await JSRuntime.InvokeVoidAsync("resetBranchDropdown");
+	}
+
+	string kkk = "";
+	private string GetItemStyle(CityInfo city)
+	{
+		// 根據特定條件設置樣式
+		if (city.IsLargeFont)
+		{
+			return " font-weight: bold; color: red; ";
+		}
+		else
+		{
+			return "font-size: 16px;";
+		}
+	}
+	public List<BranchInfo> selectedBranchList;
+	public BankInfo[] selectBankList;
+	string selectBank;
+	string bank, bankName, bankCode, branch, branchCode, branchCodeFull, branchName, selectedBankWeb;
+	public void BankChange(ChangeEventArgs e)
+	{
+		bank = e.Value?.ToString();
+		bankName = e.Value?.ToString().Substring(3);
+		bankCode = e.Value?.ToString().Substring(0, 3);
+		selectedBankWeb = GetBankWeb(bank);
+		branchCode = "";
+		switch (bankCode)
+		{
+			case "004":
+				selectedBranchList = BankData.GetBranchList_004();
+				break;
+			case "005":
+				selectedBranchList = BankData.GetBranchList_005();
+				break;
+			case "006":
+				selectedBranchList = BankData.GetBranchList_006();
+				break;
+			case "007":
+				selectedBranchList = BankData.GetBranchList_007();
+				break;
+			case "008":
+				selectedBranchList = BankData.GetBranchList_008();
+				break;
+			case "009":
+				selectedBranchList = BankData.GetBranchList_009();
+				break;
+			case "011":
+				selectedBranchList = BankData.GetBranchList_011();
+				break;
+			case "012":
+				selectedBranchList = BankData.GetBranchList_012();
+				break;
+			case "013":
+				selectedBranchList = BankData.GetBranchList_013();
+				break;
+			case "015":
+				selectedBranchList = BankData.GetBranchList_015();
+				break;
+			case "016":
+				selectedBranchList = BankData.GetBranchList_016();
+				break;
+			case "017":
+				selectedBranchList = BankData.GetBranchList_017();
+				break;
+			case "018":
+				selectedBranchList = BankData.GetBranchList_018();
+				break;
+			case "021":
+				selectedBranchList = BankData.GetBranchList_021();
+				break;
+			case "040":
+				selectedBranchList = BankData.GetBranchList_040();
+				break;
+			case "048":
+				selectedBranchList = BankData.GetBranchList_048();
+				break;
+			case "050":
+				selectedBranchList = BankData.GetBranchList_050();
+				break;
+			case "052":
+				selectedBranchList = BankData.GetBranchList_052();
+				break;
+			case "053":
+				selectedBranchList = BankData.GetBranchList_053();
+				break;
+			case "054":
+				selectedBranchList = BankData.GetBranchList_054();
+				break;
+			case "081":
+				selectedBranchList = BankData.GetBranchList_081();
+				break;
+			case "101":
+				selectedBranchList = BankData.GetBranchList_101();
+				break;
+			case "102":
+				selectedBranchList = BankData.GetBranchList_102();
+				break;
+			case "103":
+				selectedBranchList = BankData.GetBranchList_103();
+				break;
+			case "108":
+				selectedBranchList = BankData.GetBranchList_108();
+				break;
+			case "147":
+				selectedBranchList = BankData.GetBranchList_147();
+				break;
+			case "803":
+				selectedBranchList = BankData.GetBranchList_803();
+				break;
+			case "805":
+				selectedBranchList = BankData.GetBranchList_805();
+				break;
+			case "806":
+				selectedBranchList = BankData.GetBranchList_806();
+				break;
+			case "807":
+				selectedBranchList = BankData.GetBranchList_807();
+				break;
+			case "808":
+				selectedBranchList = BankData.GetBranchList_808();
+				break;
+			case "809":
+				selectedBranchList = BankData.GetBranchList_809();
+				break;
+			case "810":
+				selectedBranchList = BankData.GetBranchList_810();
+				break;
+			case "812":
+				selectedBranchList = BankData.GetBranchList_812();
+				break;
+
+			case "816":
+				selectedBranchList = BankData.GetBranchList_816();
+				break;
+			case "822":
+				selectedBranchList = BankData.GetBranchList_822();
+				break;
+		}
+	}
+
+	public static string GetBankWeb(string bank)
+	{
+		var bankInfo = BankData.GetBankList().Where(item => item.BankCode == @bank)
+		.FirstOrDefault();
+		return bankInfo?.BankWeb ?? "未找到網頁銀行";
+	}
+	public void BranchChange(ChangeEventArgs e)
+	{
+		branch = e.Value.ToString();
+		branchName = e.Value.ToString().Substring(7);
+		branchCodeFull = e.Value.ToString().Substring(0, 8);
+		branchCode = e.Value.ToString().Substring(3, 4);
+		// 获取相应的 BranchInfo 对象
+		var selectedBranch = selectedBranchList.FirstOrDefault(item => item.BranchCode.ToString().Substring(0, 8) == @branchCodeFull);
+		//// 设置 BankAddress
+		BankAddress = selectedBranch != null ? selectedBranch.BranchAddress : "未知地址";
+	}
+
+	string region;
+	public void RegionChange(ChangeEventArgs e)
+	{
+		region = e.Value.ToString();
+	}
+
+	string city;
+	public void CityChange(ChangeEventArgs e)
+	{
+		city = e.Value.ToString();
+	}
+	string money;
+
+	string BankAddress, remark, InitialMoney, InitialAccount;
+	public void MoneyChange(ChangeEventArgs e)
+	{
+		InitialAccount = e.Value.ToString();
+	}
+
+	string datee;
+	public AccountRepair[] m_AccountRepairS;//帳戶維護的列表
+	public void OnClickSave(MouseEventArgs e)
+	{
+		datee = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+		SqlConnection sqlconnection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+		DataSet dataset1 = new DataSet();
+		if (string.IsNullOrEmpty(bankName))
+		{
+			AlertService.Error("請選擇銀行");
+			return;
+		}
+		if (string.IsNullOrEmpty(city))
+		{
+			AlertService.Error("請選擇地區");
+			return;
+		}
+		if (string.IsNullOrEmpty(branch))
+		{
+			AlertService.Error("請選擇分行");
+			return;
+		}
+		if (string.IsNullOrEmpty(InitialAccount))
+		{
+			AlertService.Error("請填寫銀行帳號");
+			return;
+		}
+
+		m_AccountRepairS = Array.Empty<AccountRepair>();
+		AccountRepair[] updatedData = UpdateAccountRepairALL();
+		m_AccountRepairS = updatedData.ToArray();
+		for (int i = 0; i < m_AccountRepairS.Length; i++)
+		{
+			if (m_AccountRepairS[i].baccountNo == InitialAccount)
+			{
+				AlertService.Error("該帳戶已存在");
+				return;
+			}
+		}
+
+		//Insert Into dbo.NewAccountRepair 
+		string SQLString = "INSERT INTO dbo.NewAccountRepair ([accountBank],[accountBankNo],[accountBranch], [accountBranchNo], [accountNo], [accountAddress],[remark],[accountInsert],[accountUpdate]) VALUES (	@bankName,@bankCode,@branchName,@branchCode,@InitialAccount,@BankAddress,@remark,@accountInsert,@accountUpdate)";
+		if (sqlconnection.State == System.Data.ConnectionState.Closed)
+		{
+			sqlconnection.Open();
+			SqlCommand sqlcommand = new SqlCommand(SQLString, sqlconnection);
+			sqlcommand.Parameters.AddWithValue("@bankName", bankName);//銀行
+			sqlcommand.Parameters.AddWithValue("@bankCode", bankCode);//銀行代馬
+			sqlcommand.Parameters.AddWithValue("@branchName", branchName);//分行
+			sqlcommand.Parameters.AddWithValue("@branchCode", branchCode);//分行代碼
+			sqlcommand.Parameters.AddWithValue("@InitialAccount", InitialAccount);//帳戶
+			sqlcommand.Parameters.AddWithValue("@BankAddress", BankAddress);//地址
+			sqlcommand.Parameters.AddWithValue("@remark", remark);//地址
+			sqlcommand.Parameters.AddWithValue("@accountInsert", datee);//加入時間
+			sqlcommand.Parameters.AddWithValue("@accountUpdate", datee);//更新時間
+			int rowsAffected = sqlcommand.ExecuteNonQuery();
+			if (rowsAffected > 0)
+			{
+				AlertService.Success($"成功新增{rowsAffected}條");
+				DataVersionService.IncrementDataVersion();
+				kkk += DataVersionService.DataVersion.ToString();
+				// 清空輸入字段
+				InitialAccount = string.Empty;
+				BankAddress = string.Empty;
+				bankCode = string.Empty;
+				branchCode = string.Empty;
+				remark = string.Empty;
+				showTable_save = false;
+				showTable_select = false;
+				showTable_selectall = false;
+				showTable_selectpart = false;
+			}
+			else
+			{
+				AlertService.Error("更新失敗");
+			}
+			SqlTransaction sqlTransaction = sqlconnection.BeginTransaction();
+			sqlTransaction.Commit();
+		}
+	}
+
+	public bool showTable_select = false;
+	public bool showTable_save = false;
+	public bool showTable_selectall = false;
+	public bool showTable_selectpart = false;
+	public void OnClickAdd(MouseEventArgs e)
+	{
+		showTable_save = true;
+		showTable_selectall = false;
+		showTable_selectpart = false;
+		showTable_select = false;
+	}
+
+	public AccountRepair[] UpdateAccountRepairALL()
+	//專門給選擇銀行後跳出對應帳戶用的更新資料(有時候可能會先使用銀行維護去新增資料，這時候就要用他嚕)
+	{
+		// 新資料列表
+		List<AccountRepair> newDataList = GetAccountRepair();
+		// 將新資料列表添加到現有的 m_NewAccountS 中
+		m_AccountRepairS = newDataList.ToArray();
+		return m_AccountRepairS;
+
+	}
+
+	public DataSet dataset = new DataSet();
+	public List<AccountRepair> GetAccountRepair()//再次抓取資料
+	{
+		List<AccountRepair> newDataList = new List<AccountRepair>();
+		//SqlConnection sqlconnection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+		string connectionString = "Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022";
+		string SQLString = "SELECT * FROM NewAccountRepair ";
+		dataset = new DataSet();
+		using (SqlConnection connection = new SqlConnection(connectionString))
+		{
+			using (SqlCommand command = new SqlCommand(SQLString, connection))
+			{
+				try
+				{
+					connection.Open();
+
+					using (SqlDataReader reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							AccountRepair newData = new AccountRepair
+								{
+									// 這裡的屬性賦值根據您的資料表結構進行調整
+									baccountBank = reader.GetString(reader.GetOrdinal("accountBank")),
+									baccountBankNo = reader.GetString(reader.GetOrdinal("accountBankNo")),
+									baccountBranch = reader.GetString(reader.GetOrdinal("accountBranch")),
+									baccountBranchNo = reader.GetString(reader.GetOrdinal("accountBranchNo")),
+									baccountNo = reader.GetString(reader.GetOrdinal("accountNo")),
+									baccountAddress = reader.GetString(reader.GetOrdinal("accountAddress")),
+									baccountInitialMoney = reader.IsDBNull(reader.GetOrdinal("accountInitialMoney")) ? 0 : reader.GetDecimal(reader.GetOrdinal("accountInitialMoney")),
+									bremark = reader.IsDBNull(reader.GetOrdinal("remark")) ? "" : reader.GetString(reader.GetOrdinal("remark")),
+									baccountInsert = reader.IsDBNull(reader.GetOrdinal("accountInsert")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("accountInsert")),
+									baccountUpdate = reader.IsDBNull(reader.GetOrdinal("accountUpdate")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("accountUpdate")),
+
+									// 其他屬性...
+								};
+							newDataList.Add(newData);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					kkk += ex.Message;
+				}
+			}
+		}
+		return newDataList;
+	}
+
+}

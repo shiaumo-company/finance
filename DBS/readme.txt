@@ -1,0 +1,13 @@
+--Pages
+	-AccountNo.cs-->放置銀行列表、分行列表、地址...
+	-AccountRepairData.razor--><銀行維護>功能-->新增、搜尋
+	-DailyAccountSummary.razor-->每日帳戶報表
+	-DailyBankSummary.raozr-->每日銀行報表
+	-DailySummary.razor-->每日總報表
+	-DataVersionService.cs-->版本更新的C#
+	-FetchData.razor-->以前的coder寫的codeing
+	-ImportData.razor-->某版本的新增、查詢(已拋棄)
+	-InsertAccount.razor-->新增帳戶
+	-InsertData.razor-->新增資料
+	-InsertData2.razor-->上版本的新增查詢
+	-

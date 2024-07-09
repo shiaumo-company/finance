@@ -1,0 +1,187 @@
+﻿@page "/fetchdata"
+@using System.Data.SqlClient;
+@using DBS.Data
+@using DBS.Services
+@inject IAlertService AlertService
+@inject NavigationManager NavManager
+
+<AuthorizeView>
+    <Authorized>
+        @if (ServerData.m_TransactionS == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            //確保有資料!
+            @if (ServerData.m_TransactionS != null && ServerData.m_TransactionS.Any())
+            {
+                                    <p>有可顯示的資料。</p>
+            }
+            else
+            {
+                            <p>沒有可顯示的資料。</p>
+            }
+
+            @if (ServerData.m_AccountS != null && ServerData.m_AccountS.Any())
+            {
+                            <p>有可顯示的資料。</p>
+            }
+            else
+            {
+                    <p>沒有可顯示的資料。</p>
+            }
+            <h2 style="margin-bottom:15px">歷史交易</h2>
+            <select style="height: 30px;" @onchange="BankChange">
+                <option value="" disabled selected>請選擇銀行</option>
+                <option value="DBS">DBS</option>
+
+            </select>
+            <select style="height: 30px;" @onchange="AccountChange">
+                <option value="" disabled selected>請選擇帳號</option>
+                @foreach (var account in ServerData.m_AccountS)
+                {
+                    <option value=@account.accountNo>@account.accountNo</option>
+                }
+            </select>
+            <input type="date" value="" @onchange="BeginDateChange">
+            <input type="date" @onchange="EndDateChange">
+            <button @onclick="OnClickSearch">查詢</button>
+            <button @onclick="CheckDatabaseConnection">測試連接</button>
+            <p>@resultMessage</p>
+            <div style="height:40px"></div>
+
+            <table class="table" style="text-align:right">
+                <thead>
+                    <tr>
+                        <th style="text-align:center">交易日期</th>
+                        <th>收入</th>
+                        <th>支出</th>
+                        <th>結存餘額</th>
+                        <th>對方行帳號</th>
+                        <th>備註</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (m_TransactionS != null)
+                    {
+                        @foreach (var trade in m_TransactionS)
+                        {
+                            <tr>
+                                <td style="text-align:center">@trade.valDt.ToShortDateString()</td>
+                                @if (trade.cdtDbtInd.Equals("CRDT"))
+                                {
+                                    <td>@trade.amount.ToString("N")</td>
+                                }
+                                else
+                                {
+                                    <td>0</td>
+                                }
+                                @if (trade.cdtDbtInd.Equals("DBIT"))
+                                {
+                                    <td>@trade.amount.ToString("N")</td>
+                                }
+                                else
+                                {
+                                    <td>0</td>
+                                }
+                                <td>@trade.balance.ToString("N")</td>
+                                <td>@trade.anotherAct</td>
+                                <td></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+    <NotAuthorized>
+        
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+@code {
+    private Transaction[] m_TransactionS;
+    string bank;
+    string account;
+    DateTime beginDate;
+    DateTime endDate;
+
+
+    public void BankChange(ChangeEventArgs e)
+    {
+        bank = e.Value.ToString();
+    }
+
+    public void AccountChange(ChangeEventArgs e)
+    {
+        account = e.Value.ToString();
+    }
+
+    public void BeginDateChange(ChangeEventArgs e)
+    {
+        beginDate = Convert.ToDateTime(e.Value);
+    }
+
+    public void EndDateChange(ChangeEventArgs e)
+    {
+        endDate = Convert.ToDateTime(e.Value);
+    }
+
+    public void OnClickSearch(MouseEventArgs e)
+    {
+        bool bError = false;
+        if (string.IsNullOrWhiteSpace(bank))
+        {
+            bError = true;
+            AlertService.Error("請選擇銀行");
+        }
+        if (string.IsNullOrWhiteSpace(account))
+        {
+            bError = true;
+            AlertService.Error("請選擇帳號");
+        }
+        if (beginDate.ToString() == "0001/1/1 上午 12:00:00")
+        {
+            bError = true;
+            AlertService.Error("請輸入開始日期");
+        }
+        if (endDate.ToString() == "0001/1/1 上午 12:00:00")
+        {
+            bError = true;
+            AlertService.Error("請輸入結束日期");
+        }
+
+        if (bError)
+        {
+            m_TransactionS = null;
+            return;
+        }
+
+        m_TransactionS = ServerData.m_TransactionS.Where(item => item.accountBank == bank && item.accountNo == account && item.valDt >= beginDate && item.valDt <= endDate).ToArray();
+
+        if (m_TransactionS == null || m_TransactionS.Length <= 0)
+        {
+            AlertService.Error("查無資料");
+        }
+    }
+    //確保有連接資料庫成功
+    string resultMessage = "No connection attempt made yet.";
+    SqlConnection connection = new SqlConnection("Data Source=192.168.10.243\\SRV_DBSAPI,1433;Initial Catalog=Platform;User ID=sa;Password=DBSsa@2022");
+    void CheckDatabaseConnection()
+    {
+        if (connection.State == System.Data.ConnectionState.Closed)
+        {
+            connection.Open();
+            resultMessage = "Connected to the database successfully!";
+        }
+        else if (connection.State == System.Data.ConnectionState.Open)
+        {
+            resultMessage = "Connection is already open.";
+        }
+    }
+
+
+}

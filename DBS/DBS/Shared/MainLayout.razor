@@ -1,0 +1,42 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+
+<div class="page">
+    @if (!IsLoginRoute(NavManager.Uri))
+    {
+        <div class="sidebar" >
+            <NavMenu />
+        </div>
+    }
+    <div class="@GetContentStyle()">
+        <div style="position: fixed; z-index: 999; right: 0;bottom: 0;">
+            <Alert />
+        </div>
+        <div class="content ">
+            @Body
+        </div>
+    </div>
+</div>
+@code{
+    private bool IsLoginRoute(string uri)
+    {
+        return uri.EndsWith("/", StringComparison.OrdinalIgnoreCase) || uri.EndsWith("/login", StringComparison.OrdinalIgnoreCase);
+    }
+    private string GetContentStyle()
+    {
+        // 如果是登入頁面，返回不同的樣式
+        if (IsLoginRoute(NavManager.Uri))
+        {
+            return "login-main"; // 在 CSS 中定義 .login-content 樣式
+        }
+        else
+        {
+            return "main"; // 在 CSS 中定義 .content 樣式
+        }
+    }
+    bool _drawerOpen = true;
+    public void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

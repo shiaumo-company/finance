@@ -1,0 +1,122 @@
+*[b-p3l48zyd4n] {
+    /*font-family: "funinn",YouYuan, Monospace;*/
+    font-family: "Microsoft JhengHei";
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+    font-weight: 700;
+}
+
+.table1[b-p3l48zyd4n] {
+    position: absolute; /* 设置表格为绝对定位 */
+    z-index: -1; /* 设置表格1在表格2之上 */
+    background-image: url("https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(4px);
+    opacity: 0.6; /* 设置透明度为 0.5，即 50% 不透明 */
+    width: 100%;
+    table-layout: fixed;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    transform: translateY(4%); /* 使用transform属性上移50%的高度，使其垂直居中 */
+    height: 90vh; /* 设置容器高度为视口高度，确保内容在垂直方向居中 */
+}
+
+.table2[b-p3l48zyd4n] {
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    transform: translate(250%, 60%);
+    border: 0;
+    height: 180px;
+    width: 450px;
+    background-color: rgba(255, 255, 254, 0.8);
+    top: 250px;
+    border-radius: 8px;
+}
+
+.form-login[b-p3l48zyd4n] {
+    height: 100px;
+}
+
+    .form-login .td-left[b-p3l48zyd4n] {
+        text-align: right; /* 水平居中 */
+        vertical-align: middle; /* 垂直居中 */
+        width: 120px;
+        font-weight: 700;
+        font-size: 50px;
+        border: 0;
+        flex-grow: 1; /* 1:1 寬度比例 */
+    }
+
+    .form-login .td-right[b-p3l48zyd4n] {
+        text-align: left; /* 水平居中 */
+        vertical-align: middle; /* 垂直居中 */
+        font-weight: 700;
+        font-size: 50px;
+        border: 0;
+        flex-grow: 2; /* 1:1 寬度比例 */
+    }
+
+.form-btn .td[b-p3l48zyd4n] {
+    text-align: center; /* 水平居中 */
+    vertical-align: middle; /* 垂直居中 */
+    font-weight: 700;
+    font-size: 30px;
+    border: 0;
+}
+
+
+.btn_in[b-p3l48zyd4n] {
+    background-color: rgba(171,209,198, 0.6);
+    border-radius: 8px;
+    border: 3px;
+    border-color: #004643;
+    color: #004643;
+    height: 50px;
+    font-weight: 700;
+    width: 90px;
+    margin: 10px; /* 垂直方向上增加 10px 的间距 */
+    font-size: 30px;
+    transition: all 1s 0s ease;
+}
+
+    .btn_in:hover[b-p3l48zyd4n] {
+        background-color: rgba(184,193,236,0.8);
+        border-radius: 8px;
+        border: 3px;
+        border-color: rgba(53,14,81,0.6);
+        color: #350E51;
+        font-weight: 700;
+        cursor: pointer;
+        height: 50px;
+        width: 90px;
+        margin: 10px; /* 垂直方向上增加 10px 的间距 */
+    }
+@media only screen and (max-width: 630px){
+        .table2[b-p3l48zyd4n] {
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            transform: translate(20%, 50%);
+            border: 0;
+            height: 180px;
+            width: 450px;
+            background-color: rgba(255, 255, 254, 0.8);
+            border-radius: 8px;
+        }
+    }
+@media only screen and (max-width: 1575px) {
+    .table2[b-p3l48zyd4n] {
+        justify-content: center; /* 水平居中 */
+        align-items: center; /* 垂直居中 */
+        transform: translate(20%, 50%);
+        border: 0;
+        height: 180px;
+        width: 450px;
+        background-color: rgba(255, 255, 254, 0.8);
+        border-radius: 8px;
+    }
+}

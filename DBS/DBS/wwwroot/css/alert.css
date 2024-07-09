@@ -1,0 +1,78 @@
+﻿.AlertArea-background {
+    /*padding: 20px;*/
+    background-color: #6b6b6b;
+    /*margin-bottom: 15px;*/
+}
+
+.AlertArea {
+    /*padding: 20px;*/
+    background-color: white;
+    /*margin-bottom: 15px;*/
+}
+
+.CloseArea {
+    margin-bottom: 10px;
+    left: 0px;
+}
+
+.EditArea {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    right: 0px;
+}
+
+.widthFull {
+    width: 100%;
+}
+
+.widthHalfFull {
+    width: 40%;
+}
+
+.LabelRight {
+    text-align:right;
+}
+
+.tdImage {
+    max-width: 150px;
+    max-height: 70px;
+    margin-top: 25%;
+}
+
+.buttonstyle {
+    text-rendering: auto;
+    color: black;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: center;
+    align-items: flex-start;
+    background-color: #efefef;
+    font: 400 13.333px Arial;
+    border-width: 2px;
+    border-style: outset;
+    border-color: #767676;
+    border-image: initial;
+    padding: 1px 6px;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+    .buttonstyle:link {
+        text-decoration: none;
+        color: black;
+    }
+
+    .buttonstyle:hover {
+        text-decoration: none;
+        color: black;
+    }
+
+    .buttonstyle:active {
+        text-decoration: none;
+        color: black;
+    }

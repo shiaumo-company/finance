@@ -1,0 +1,9 @@
+[
+    {
+        "inputFile": ".//bootstrap-5.1.1/scss/bootstrap.scss",
+        "outputFile": "./wwwroot/css/bootstrap/bootstrap2.css"
+    },
+   
+
+
+]
