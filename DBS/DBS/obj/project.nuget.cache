@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dCnW/TcZvtkzFCug5g4jtWCzyRgyO125bxBG9eMESE9RgAIQMQkf7ieuh1M3ragzj+8GdLcvhJ/zRYHkwDmFVA==",
+  "dgSpecHash": "9SeyDTbTy5bUBFNt1zLoquxz3OLiGYBJu9owKuwls83z+Z4bvyizrRfmmDzWVgV5yWrQdBdrg7JeW3hOJ/4SXg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\013590\\source\\repos\\DBS\\DBS_240313_2\\DBS\\DBS\\DBS.csproj",
+  "projectFilePath": "C:\\Users\\013590\\gitgit\\finance\\DBS\\DBS\\DBS.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\013590\\.nuget\\packages\\antdesign\\0.18.0\\antdesign.0.18.0.nupkg.sha512",
     "C:\\Users\\013590\\.nuget\\packages\\blazored.typeahead\\4.7.0\\blazored.typeahead.4.7.0.nupkg.sha512",
@@ -139,7 +139,11 @@
     "C:\\Users\\013590\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\013590\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\013590\\.nuget\\packages\\x.pagedlist\\8.4.7\\x.pagedlist.8.4.7.nupkg.sha512",
-    "C:\\Users\\013590\\.nuget\\packages\\x.pagedlist.mvc.core\\8.4.7\\x.pagedlist.mvc.core.8.4.7.nupkg.sha512"
+    "C:\\Users\\013590\\.nuget\\packages\\x.pagedlist.mvc.core\\8.4.7\\x.pagedlist.mvc.core.8.4.7.nupkg.sha512",
+    "C:\\Users\\013590\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.31\\microsoft.windowsdesktop.app.ref.6.0.31.nupkg.sha512",
+    "C:\\Users\\013590\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.31\\microsoft.netcore.app.ref.6.0.31.nupkg.sha512",
+    "C:\\Users\\013590\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.31\\microsoft.aspnetcore.app.ref.6.0.31.nupkg.sha512",
+    "C:\\Users\\013590\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.31\\microsoft.netcore.app.host.win-x64.6.0.31.nupkg.sha512"
   ],
   "logs": [
     {

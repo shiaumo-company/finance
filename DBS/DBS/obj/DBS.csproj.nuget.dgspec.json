@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\013590\\source\\repos\\DBS\\DBS_240313_2\\DBS\\DBS\\DBS.csproj": {}
+    "C:\\Users\\013590\\gitgit\\finance\\DBS\\DBS\\DBS.csproj": {}
   },
   "projects": {
-    "C:\\Users\\013590\\source\\repos\\DBS\\DBS_240313_2\\DBS\\DBS\\DBS.csproj": {
+    "C:\\Users\\013590\\gitgit\\finance\\DBS\\DBS\\DBS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\013590\\source\\repos\\DBS\\DBS_240313_2\\DBS\\DBS\\DBS.csproj",
+        "projectUniqueName": "C:\\Users\\013590\\gitgit\\finance\\DBS\\DBS\\DBS.csproj",
         "projectName": "DBS",
-        "projectPath": "C:\\Users\\013590\\source\\repos\\DBS\\DBS_240313_2\\DBS\\DBS\\DBS.csproj",
+        "projectPath": "C:\\Users\\013590\\gitgit\\finance\\DBS\\DBS\\DBS.csproj",
         "packagesPath": "C:\\Users\\013590\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\013590\\source\\repos\\DBS\\DBS_240313_2\\DBS\\DBS\\obj\\",
+        "outputPath": "C:\\Users\\013590\\gitgit\\finance\\DBS\\DBS\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -121,6 +121,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.31, 6.0.31]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.31, 6.0.31]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.31, 6.0.31]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.31, 6.0.31]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
