@@ -12,112 +12,112 @@ namespace DBS.Pages
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 1 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 2 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 3 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 4 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 5 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 6 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 7 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 8 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 9 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using DBS;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\_Imports.razor"
+#line 10 "C:\Users\013590\gitgit\finance\DBS\DBS\_Imports.razor"
 using DBS.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 2 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
 using System;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 3 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
 using System.Data;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 4 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
 using System.Data.SqlClient;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 5 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
 using DBS.Data;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 6 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
 using DBS.Pages;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 7 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
 using DBS.Services;
 
 #line default
@@ -132,7 +132,7 @@ using DBS.Services;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 117 "C:\Users\013590\source\repos\DBS\DBS_240313_2\DBS\DBS\Pages\DailySummary.razor"
+#line 117 "C:\Users\013590\gitgit\finance\DBS\DBS\Pages\DailySummary.razor"
        
 	[Parameter]
 	public string SubBranch { get; set; }
